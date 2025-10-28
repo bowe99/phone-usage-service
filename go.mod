@@ -2,8 +2,6 @@ module github.com/bowe99/phone-usage-service
 
 go 1.23.0
 
-toolchain go1.24.2
-
 require (
 	github.com/joho/godotenv v1.5.1
 	go.mongodb.org/mongo-driver v1.17.6

@@ -9,9 +9,10 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/bowe99/phone-usage-service/internal/api/router"
 	"github.com/bowe99/phone-usage-service/internal/infra/config"
 	"github.com/bowe99/phone-usage-service/internal/infra/database"
-	"github.com/bowe99/phone-usage-service/internal/api/router"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -33,6 +34,8 @@ func main() {
 		}
 	}()
 	log.Println("Successfully connected to MongoDB")
+
+	r := setupRouter(db, cfg)
 
 	srv := &http.Server{
 		Addr:         ":" + cfg.Server.Port,
@@ -64,6 +67,6 @@ func main() {
 	log.Println("Server exited")
 }
 
-func setupRouter(db *database.MongoDB, cfg *config.Config) *router.Router {
+func setupRouter(db *database.MongoDB, cfg *config.Config) *gin.Engine {
 	return router.SetupRouter(db, cfg.Server.GinMode)
 }
