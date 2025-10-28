@@ -1,11 +1,12 @@
 package router
 
 import (
+	"github.com/bowe99/phone-usage-service/internal/api/handler"
 	"github.com/bowe99/phone-usage-service/internal/infra/database"
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRouter(db *database.MongoDB, ginMode string) *gin.Engine {
+func SetupRouter(db *database.MongoDB, ginMode string, userHandler *handler.UserHandler) *gin.Engine {
 	gin.SetMode(ginMode)
 	router := gin.New()
 
@@ -18,6 +19,12 @@ func SetupRouter(db *database.MongoDB, ginMode string) *gin.Engine {
 		}
 		c.JSON(200, gin.H{"status": "heatlhy"})
 	})
+
+	users := router.Group("/api/users")
+	{
+		users.POST("", userHandler.CreateUser)
+		users.PUT("/:id", userHandler.UpdateUserProfile)
+	}
 
 	return router
 }

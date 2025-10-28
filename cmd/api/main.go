@@ -9,9 +9,12 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/bowe99/phone-usage-service/internal/api/handler"
 	"github.com/bowe99/phone-usage-service/internal/api/router"
+	"github.com/bowe99/phone-usage-service/internal/application/service"
 	"github.com/bowe99/phone-usage-service/internal/infra/config"
 	"github.com/bowe99/phone-usage-service/internal/infra/database"
+	"github.com/bowe99/phone-usage-service/internal/infra/repository"
 	"github.com/gin-gonic/gin"
 )
 
@@ -35,7 +38,21 @@ func main() {
 	}()
 	log.Println("Successfully connected to MongoDB")
 
-	r := setupRouter(db, cfg)
+	userRepo := repository.SetupUserRepository(db.Database)
+	// cycleRepo := repository.NewCycleRepository(db.Database)
+	// usageRepo := repository.NewUsageRepository(db.Database)
+
+	// Initialize services (Application layer)
+	userService := service.SetupUserService(userRepo)
+	// cycleService := service.NewCycleService(cycleRepo)
+	// usageService := service.NewUsageService(usageRepo, cycleRepo)
+
+	// Initialize handlers (Presentation layer)
+	userHandler := handler.SetupUserHandler(userService)
+	// cycleHandler := handler.NewCycleHandler(cycleService)
+	// usageHandler := handler.NewUsageHandler(usageService)
+
+	r := setupRouter(db, cfg, userHandler)
 
 	srv := &http.Server{
 		Addr:         ":" + cfg.Server.Port,
@@ -67,6 +84,6 @@ func main() {
 	log.Println("Server exited")
 }
 
-func setupRouter(db *database.MongoDB, cfg *config.Config) *gin.Engine {
-	return router.SetupRouter(db, cfg.Server.GinMode)
+func setupRouter(db *database.MongoDB, cfg *config.Config, userHandler *handler.UserHandler) *gin.Engine {
+	return router.SetupRouter(db, cfg.Server.GinMode, userHandler)
 }
