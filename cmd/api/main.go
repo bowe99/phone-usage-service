@@ -39,20 +39,20 @@ func main() {
 	log.Println("Successfully connected to MongoDB")
 
 	userRepo := repository.SetupUserRepository(db.Database)
-	// cycleRepo := repository.NewCycleRepository(db.Database)
-	// usageRepo := repository.NewUsageRepository(db.Database)
+	cycleRepo := repository.SetupCycleRepository(db.Database)
+	usageRepo := repository.SetupDailyUsageRepository(db.Database)
 
 	// Initialize services (Application layer)
 	userService := service.SetupUserService(userRepo)
-	// cycleService := service.NewCycleService(cycleRepo)
-	// usageService := service.NewUsageService(usageRepo, cycleRepo)
+	cycleService := service.SetupCycleService(cycleRepo)
+	usageService := service.SetupDailyUsageService(usageRepo, cycleRepo)
 
 	// Initialize handlers (Presentation layer)
 	userHandler := handler.SetupUserHandler(userService)
-	// cycleHandler := handler.NewCycleHandler(cycleService)
-	// usageHandler := handler.NewUsageHandler(usageService)
+	cycleHandler := handler.SetupCycleHandler(cycleService)
+	usageHandler := handler.SetupDailyUsageHandler(usageService)
 
-	r := setupRouter(db, cfg, userHandler)
+	r := setupRouter(db, cfg, userHandler, cycleHandler, usageHandler)
 
 	srv := &http.Server{
 		Addr:         ":" + cfg.Server.Port,
@@ -84,6 +84,6 @@ func main() {
 	log.Println("Server exited")
 }
 
-func setupRouter(db *database.MongoDB, cfg *config.Config, userHandler *handler.UserHandler) *gin.Engine {
-	return router.SetupRouter(db, cfg.Server.GinMode, userHandler)
+func setupRouter(db *database.MongoDB, cfg *config.Config, userHandler *handler.UserHandler, cycleHandler *handler.CycleHandler, dailyUsageHandler *handler.DailyUsageHandler) *gin.Engine {
+	return router.SetupRouter(db, cfg.Server.GinMode, userHandler, cycleHandler, dailyUsageHandler)
 }

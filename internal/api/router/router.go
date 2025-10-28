@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRouter(db *database.MongoDB, ginMode string, userHandler *handler.UserHandler) *gin.Engine {
+func SetupRouter(db *database.MongoDB, ginMode string, userHandler *handler.UserHandler, cycleHandler *handler.CycleHandler, dailyUsageHandler *handler.DailyUsageHandler) *gin.Engine {
 	gin.SetMode(ginMode)
 	router := gin.New()
 
@@ -25,6 +25,18 @@ func SetupRouter(db *database.MongoDB, ginMode string, userHandler *handler.User
 		users.POST("", userHandler.CreateUser)
 		users.PUT("/:id", userHandler.UpdateUserProfile)
 	}
+
+	cycle := router.Group("/api/cycle")
+	{
+		cycle.POST("/history", cycleHandler.GetCycleHistory)
+	}
+
+	usage := router.Group("/api/usage")
+	{
+		usage.POST("/current-cycle", dailyUsageHandler.GetCurrentCycleUsage)
+	}
+
+
 
 	return router
 }
