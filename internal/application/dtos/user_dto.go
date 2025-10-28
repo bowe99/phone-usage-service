@@ -8,8 +8,8 @@ type CreateUserRequest struct {
 }
 
 type UpdateUserRequest struct {
-	FirstName *string `json:"firstName" binding:"omitempty,min=2,max=50"`
-	LastName  *string `json:"lastName" binding:"omitempty,min=2,max=50"`
-	Email     *string `json:"email" binding:"omitempty,email"`
-	Password  *string `json:"password" binding:"omitempty,min=8"`
+	FirstName string `json:"firstName" binding:"omitempty,min=2,max=50"`
+	LastName  string `json:"lastName" binding:"omitempty,min=2,max=50"`
+	Email     string `json:"email" binding:"omitempty,email"`
+	Password  string `json:"password" binding:"omitempty,min=8"`
 }

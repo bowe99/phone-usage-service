@@ -57,21 +57,21 @@ func (s *UserService) UpdateUserProfile(ctx context.Context, userID string, req 
 		return nil, err
 	}
 
-	if req.FirstName != nil {
-        user.FirstName = *req.FirstName
+	if req.FirstName != "" {
+        user.FirstName = req.FirstName
     }
 
-    if req.LastName != nil {
-        user.LastName = *req.LastName
+    if req.LastName != "" {
+        user.LastName = req.LastName
     }
 
-    if req.Email != nil {
-        user.Email = *req.Email
+    if req.Email != "" {
+        user.Email = req.Email
     }
 
 	//Not in the requirements from the project but assumed it was a typo as an update for the password would be a necessary case
-    if req.Password != nil {
-        hashedPassword, err := bcrypt.GenerateFromPassword([]byte(*req.Password), bcrypt.DefaultCost)
+    if req.Password != "" {
+        hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 		if err != nil {
 			return nil, fmt.Errorf("failed to ahsh password: %w", err)
 		}
